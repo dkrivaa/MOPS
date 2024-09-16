@@ -1,0 +1,94 @@
+import pandas as pd
+import numpy as np
+import requests
+from io import BytesIO
+import os
+
+from codes import budget_types, organization_codes, wage_codes
+
+
+def get_data(year, organization, budget):
+
+    # urls for Excel data from Finance Ministry 'https://www.gov.il/he/departments/policies/tableau'
+    urls = {
+        2024: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2024.xls',
+        2023: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2023.xlsx',
+        2022: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2022.xlsx',
+        2021: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_tableau_BudgetData2021.xlsx',
+        2020: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2020.xlsx',
+        2019: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2019.xlsx',
+        2018: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2018.xlsx',
+        2017: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2017.xlsx',
+        2016: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2016.xlsx',
+        2015: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2015.xlsx'
+    }
+    # url20241 = 'C:\\Users\danny\Desktop\BudgetData\original2024Before0710231024.xlsx'
+
+    # Access the URL using the year
+    url = urls.get(year)  # Get the URL based on the provided year
+    if url:
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            # Wrap the byte string in a BytesIO object
+            excel_buffer = BytesIO(response.content)
+            # Make dataframe
+            df = pd.read_excel(excel_buffer)
+            # Getting MOPS data
+            org_dict = organization_codes()
+            if organization == 'total':
+                if budget == 'total':
+                    df = df[df.iloc[:, 4] == 12]
+                elif budget == 'wages':
+                    df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 21] == 1)]
+                elif budget == 'other':
+                    df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 21] != 1)]
+
+            else :
+                if budget == 'total':
+                    df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 12].isin(org_dict[organization]))]
+                elif budget == 'wages':
+                    df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 12].isin(org_dict[organization])) &
+                            (df.iloc[:, 21] == 1)]
+                elif budget == 'other':
+                    df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 12].isin(org_dict[organization])) &
+                            (df.iloc[:, 21] != 1)]
+            return df
+
+
+def get_annual_total(df, organization, budget):
+    budget_dict = budget_types()
+
+    year = df.iloc[0, 0]
+    # Filter DataFrames for original, approved, and executed budget types
+    df_original = df[
+        df.iloc[:, 29] == budget_dict['original']].copy()  # Use .copy() to avoid SettingWithCopyWarning
+    df_approved = df[df.iloc[:, 29] == budget_dict['approved']].copy()
+    df_executed = df[df.iloc[:, 29] == budget_dict['executed']].copy()
+
+    original_budget = df_original.iloc[:, 30].sum()
+    approved_budget = df_approved.iloc[:, 30].sum()
+    executed_budget = df_executed.iloc[:, 30].sum()
+
+    original_manpower = df_original.iloc[:, 34].sum() + (df_original.iloc[:, 35].sum() / 12)
+    approved_manpower = df_approved.iloc[:, 34].sum() + (df_approved.iloc[:, 35].sum() / 12)
+    executed_manpower = df_executed.iloc[:, 34].sum() + (df_executed.iloc[:, 35].sum() / 12)
+
+    temp_dict = {
+        'organization': organization,
+        'budget': budget,
+        'year': year,
+        'original_budget': original_budget,
+        'approved_budget': approved_budget,
+        'executed_budget': executed_budget,
+        'original_manpower': original_manpower,
+        'approved_manpower': approved_manpower,
+        'executed_manpower': executed_manpower,
+    }
+
+    # Convert NumPy float64 and int64 to Python float and int
+    final_dict = {key: float(value) if isinstance(value, np.float64) else int(value) if isinstance(value, np.int64) else value
+                  for key, value in temp_dict.items()}
+
+    return final_dict
+
