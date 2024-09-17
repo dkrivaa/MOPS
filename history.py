@@ -1,4 +1,5 @@
 from mof_data import get_data, get_annual_total
+from wix_requests import annual_request
 
 # Lists to hold data
 total_data = []
@@ -17,7 +18,6 @@ for year in years:
         data = get_annual_total(df, 'total', budget)
         total_data.append(data)
 
-
         organizations = ['ministry', 'witness', 'fire', 'prison', 'police']
         for organization in organizations:
             df = get_data(year, organization, budget)
@@ -34,4 +34,6 @@ for year in years:
             elif organization == 'police':
                 police_data.append(data)
 
-print('police data: ', police_data)
+data_lists = [total_data, ministry_data, witness_data, fire_data, prison_data, police_data]
+for d_list in data_lists:
+    annual_request(d_list)

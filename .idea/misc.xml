@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectDictionaryState">
-    <dictionary name="danny" />
+  <component name="Black">
+    <option name="sdkName" value="Python 3.12 (MOPS)" />
   </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12 (MOPS)" project-jdk-type="Python SDK" />
   <component name="ReaderModeSettings">
     <option name="showWarnings" value="true" />
   </component>
