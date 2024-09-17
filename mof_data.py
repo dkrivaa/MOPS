@@ -92,3 +92,16 @@ def get_annual_total(df, organization, budget):
 
     return final_dict
 
+
+def get_takanot(df):
+    budget_dict = budget_types()
+
+    year = df.iloc[0, 0]
+    # Filter DataFrames for original, approved, and executed budget types
+    df_original = df[
+        df.iloc[:, 29] == budget_dict['original']].copy()  # Use .copy() to avoid SettingWithCopyWarning
+    df_approved = df[df.iloc[:, 29] == budget_dict['approved']].copy()
+    df_executed = df[df.iloc[:, 29] == budget_dict['executed']].copy()
+
+
+
