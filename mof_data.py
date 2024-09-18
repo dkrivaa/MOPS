@@ -115,9 +115,12 @@ def get_takanot(df):
     df_executed = df[df.iloc[:, 29] == budget_dict['executed']].copy()
     df_executed = drop_columns(df_executed)
 
+    df = df_original.merge(df_approved[['קוד תקנה', 'הוצאה נטו']], on='קוד תקנה', how='outer')
+    df = df.merge(df_executed[['קוד תקנה', 'הוצאה נטו']], on='קוד תקנה', how='outer')
     print(df_original.shape)
     print(df_approved.shape)
     print(df_executed.shape)
+    print(df.shape)
 
 
 
