@@ -127,10 +127,7 @@ def get_takanot(df):
         'שם תקנה': 'name'
     })
     df_json = df.to_json(orient='records', force_ascii=False)
-    # print(df.shape)
-    # print(df.columns)
-    # print(df)
-    print(df_json)
+    return df_json
 
 
 
