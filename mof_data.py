@@ -93,6 +93,13 @@ def get_annual_total(df, organization, budget):
     return final_dict
 
 
+def drop_columns(df):
+    columns_to_drop = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20,
+                       21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 37]
+    df = df.drop(columns=[columns_to_drop], axis=1)
+    return df
+
+
 def get_takanot(df):
     budget_dict = budget_types()
 
@@ -100,8 +107,17 @@ def get_takanot(df):
     # Filter DataFrames for original, approved, and executed budget types
     df_original = df[
         df.iloc[:, 29] == budget_dict['original']].copy()  # Use .copy() to avoid SettingWithCopyWarning
+    df_original = drop_columns(df_original)
+
     df_approved = df[df.iloc[:, 29] == budget_dict['approved']].copy()
+    df_approved = drop_columns(df_approved)
+
     df_executed = df[df.iloc[:, 29] == budget_dict['executed']].copy()
+    df_executed = drop_columns(df_executed)
+
+    print(df_original.shape)
+    print(df_approved.shape)
+    print(df_executed.shape)
 
 
 
