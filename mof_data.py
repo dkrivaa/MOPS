@@ -94,7 +94,7 @@ def get_annual_total(df, organization, budget):
 
 
 def drop_columns(df):
-    columns_to_drop = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20,
+    columns_to_drop = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20,
                        21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37]
     df = df.drop(df.columns[columns_to_drop], axis=1)
     return df
@@ -108,19 +108,29 @@ def get_takanot(df):
     df_original = df[
         df.iloc[:, 29] == budget_dict['original']].copy()  # Use .copy() to avoid SettingWithCopyWarning
     df_original = drop_columns(df_original)
+    df_original = df_original.rename(columns={'הוצאה נטו': 'original'})
 
     df_approved = df[df.iloc[:, 29] == budget_dict['approved']].copy()
     df_approved = drop_columns(df_approved)
+    df_approved = df_approved.rename(columns={'הוצאה נטו': 'approved'})
 
     df_executed = df[df.iloc[:, 29] == budget_dict['executed']].copy()
     df_executed = drop_columns(df_executed)
+    df_executed = df_executed.rename(columns={'הוצאה נטו': 'executed'})
 
-    df = df_original.merge(df_approved[['קוד תקנה', 'הוצאה נטו']], on='קוד תקנה', how='outer')
-    df = df.merge(df_executed[['קוד תקנה', 'הוצאה נטו']], on='קוד תקנה', how='outer')
-    print(df_original.shape)
-    print(df_approved.shape)
-    print(df_executed.shape)
-    print(df.shape)
+    df = df_original.merge(df_approved[['קוד תקנה', 'approved']], on='קוד תקנה', how='outer')
+    df = df.merge(df_executed[['קוד תקנה', 'executed']], on='קוד תקנה', how='outer')
+
+    df = df.rename(columns={
+        'שנה': 'year',
+        'קוד תקנה': 'code',
+        'שם תקנה': 'name'
+    })
+    df_json = df.to_json(orient='records', force_ascii=False)
+    # print(df.shape)
+    # print(df.columns)
+    # print(df)
+    print(df_json)
 
 
 
