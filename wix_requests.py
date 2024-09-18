@@ -21,6 +21,4 @@ def annual_request(data, ):
         print(f"Error sending request: {e}")
 
 
-def total_requests(data):
-    url = 'https://dannykrivaa.wixsite.com/mops/_functions/AnnualBudgetData'
-    data = data
+
