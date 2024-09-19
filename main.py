@@ -1,8 +1,7 @@
 """
-Run this file to update data from Ministry of Finance data.
+Run this file to update data from Ministry of Finance data on wix site (MOPS).
 At present, data is updated to 23.5.2024
 """
-
 
 from history import update_annual
 from takanot import update_takanot
