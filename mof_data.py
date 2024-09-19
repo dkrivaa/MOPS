@@ -129,7 +129,7 @@ def get_takanot(df):
         'קוד תקנה': 'code',
         'שם תקנה': 'name'
     })
-    print(len(df))
+
     for x in range(0, len(df), 50):
         y = x + 50
         print(x, y)
@@ -140,7 +140,6 @@ def get_takanot(df):
 
 
 
-        # return df_json
 
 
 
