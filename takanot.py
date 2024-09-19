@@ -8,5 +8,5 @@ for year in years:
     df = get_data(year, 'total', 'total')
 
     df_json = get_takanot(df)
-    takanot_request(df_json)
+    # takanot_request(df_json)
 

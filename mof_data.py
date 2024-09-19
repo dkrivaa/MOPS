@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import requests
 from io import BytesIO
+from wix_requests import takanot_request
 import os
 
 from codes import budget_types, organization_codes, wage_codes
@@ -126,10 +127,17 @@ def get_takanot(df):
         'קוד תקנה': 'code',
         'שם תקנה': 'name'
     })
+    print(len(df))
+    for x in range(0, len(df), 50):
+        y = x + 50
+        print(x, y)
+        df_temp = df[x:y]
+        df_json = df_temp.to_json(orient='records', force_ascii=False)
+        takanot_request(df_json)
 
-    df = df.head(55)
-    df_json = df.to_json(orient='records', force_ascii=False)
-    return df_json
+
+
+        # return df_json
 
 
 
