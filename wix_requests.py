@@ -29,7 +29,7 @@ def takanot_request(data, ):
     }
     # Sending the POST request
     try:
-        response = requests.post(url, headers=headers, data=json.dumps(data))
+        response = requests.post(url, headers=headers, json=data)    # data=json.dumps(data))
         # Check if the request was successful
         if response.status_code == 200:
             print("Success! Data received:", response.json())

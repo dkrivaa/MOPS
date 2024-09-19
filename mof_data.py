@@ -126,6 +126,8 @@ def get_takanot(df):
         'קוד תקנה': 'code',
         'שם תקנה': 'name'
     })
+
+    df = df.head(55)
     df_json = df.to_json(orient='records', force_ascii=False)
     return df_json
 
