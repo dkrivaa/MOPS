@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 import numpy as np
 import requests
@@ -133,7 +135,8 @@ def get_takanot(df):
         print(x, y)
         df_temp = df[x:y]
         df_json = df_temp.to_json(orient='records', force_ascii=False)
-        takanot_request(df_json)
+        json_obj = json.loads(df_json)
+        takanot_request(json_obj)
 
 
 
