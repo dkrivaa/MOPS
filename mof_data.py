@@ -61,7 +61,7 @@ def get_data(year, organization, budget):
 
 def get_annual_total(df, organization, budget):
     budget_dict = budget_types()
-
+    print(df.iloc[0, 0], )
     year = df.iloc[0, 0]
     # Filter DataFrames for original, approved, and executed budget types
     df_original = df[
@@ -145,17 +145,18 @@ def get_data_special(year, organization, budget):
 
     # urls for Excel data from Finance Ministry 'https://www.gov.il/he/departments/policies/tableau'
     urls = {
-        20241: 'before0710original2024.xlsx',
+        2024: 'before0710original2024.xlsx',
         2023: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2023.xlsx',
         2022: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2022.xlsx',
     }
     # url20241 = 'before0710original2024.xlsx'
 
     # Access the URL using the year
-    if year < 20241:
+    if year < 2024:
         url = urls.get(year)  # Get the URL based on the provided year
         if url:
             response = requests.get(url)
+            print(response.status_code)
 
             if response.status_code == 200:
                 # Wrap the byte string in a BytesIO object

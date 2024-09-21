@@ -62,7 +62,7 @@ def update_annual_special():
 
             organizations = ['ministry', 'witness', 'fire', 'prison', 'police']
             for organization in organizations:
-                df = get_data(year, organization, budget)
+                df = get_data_special(year, organization, budget)
                 data = get_annual_total(df, organization, budget)
                 # Append data to the appropriate list
                 if organization == 'ministry':
