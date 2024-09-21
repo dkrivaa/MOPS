@@ -22,6 +22,6 @@ def update_takanot_special():
 
         if year == 20241:
             df = get_data_special(year, 'total', 'total')
-            df['year'] = 20241
+            # df['year'] = 20241
             df_json = get_takanot_special(df)
 
