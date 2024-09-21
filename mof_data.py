@@ -141,5 +141,70 @@ def get_takanot(df):
 
 
 
+def get_data_special(year, organization, budget):
+
+    # urls for Excel data from Finance Ministry 'https://www.gov.il/he/departments/policies/tableau'
+    urls = {
+        2024: 'before0710original2024.xlsx',
+        2023: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2023.xlsx',
+        2022: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2022.xlsx',
+    }
+    # url20241 = 'before0710original2024.xlsx'
+
+    # Access the URL using the year
+    if year < 2024:
+        url = urls.get(year)  # Get the URL based on the provided year
+        if url:
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                # Wrap the byte string in a BytesIO object
+                excel_buffer = BytesIO(response.content)
+                # Make dataframe
+                df = pd.read_excel(excel_buffer)
+                # Getting MOPS data
+                org_dict = organization_codes()
+                if organization == 'total':
+                    if budget == 'total':
+                        df = df[df.iloc[:, 4] == 12]
+                    elif budget == 'wages':
+                        df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 21] == 1)]
+                    elif budget == 'other':
+                        df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 21] != 1)]
+
+                else :
+                    if budget == 'total':
+                        df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 12].isin(org_dict[organization]))]
+                    elif budget == 'wages':
+                        df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 12].isin(org_dict[organization])) &
+                                (df.iloc[:, 21] == 1)]
+                    elif budget == 'other':
+                        df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 12].isin(org_dict[organization])) &
+                                (df.iloc[:, 21] != 1)]
+                return df
+
+    else:
+        # Make dataframe
+        df = pd.read_excel(urls.get(year))
+        # Getting MOPS data
+        org_dict = organization_codes()
+        if organization == 'total':
+            if budget == 'total':
+                df = df[df.iloc[:, 4] == 12]
+            elif budget == 'wages':
+                df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 21] == 1)]
+            elif budget == 'other':
+                df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 21] != 1)]
+
+        else:
+            if budget == 'total':
+                df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 12].isin(org_dict[organization]))]
+            elif budget == 'wages':
+                df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 12].isin(org_dict[organization])) &
+                        (df.iloc[:, 21] == 1)]
+            elif budget == 'other':
+                df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 12].isin(org_dict[organization])) &
+                        (df.iloc[:, 21] != 1)]
+        return df
 
 
