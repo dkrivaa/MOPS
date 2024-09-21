@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import requests
 from io import BytesIO
-from wix_requests import takanot_request
+from wix_requests import takanot_request, takanot_request_special
 import os
 
 from codes import budget_types, organization_codes, wage_codes
@@ -145,14 +145,14 @@ def get_data_special(year, organization, budget):
 
     # urls for Excel data from Finance Ministry 'https://www.gov.il/he/departments/policies/tableau'
     urls = {
-        2024: 'before0710original2024.xlsx',
+        20241: 'before0710original2024.xlsx',
         2023: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2023.xlsx',
         2022: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2022.xlsx',
     }
     # url20241 = 'before0710original2024.xlsx'
 
     # Access the URL using the year
-    if year < 2024:
+    if year < 20241:
         url = urls.get(year)  # Get the URL based on the provided year
         if url:
             response = requests.get(url)
@@ -206,5 +206,41 @@ def get_data_special(year, organization, budget):
                 df = df[(df.iloc[:, 4] == 12) & (df.iloc[:, 12].isin(org_dict[organization])) &
                         (df.iloc[:, 21] != 1)]
         return df
+
+
+def get_takanot_special(df):
+    budget_dict = budget_types()
+
+    year = df.iloc[0, 0]
+    # Filter DataFrames for original, approved, and executed budget types
+    df_original = df[
+        df.iloc[:, 29] == budget_dict['original']].copy()  # Use .copy() to avoid SettingWithCopyWarning
+    df_original = drop_columns(df_original)
+    df_original = df_original.rename(columns={'הוצאה נטו': 'original'})
+
+    df_approved = df[df.iloc[:, 29] == budget_dict['approved']].copy()
+    df_approved = drop_columns(df_approved)
+    df_approved = df_approved.rename(columns={'הוצאה נטו': 'approved'})
+
+    df_executed = df[df.iloc[:, 29] == budget_dict['executed']].copy()
+    df_executed = drop_columns(df_executed)
+    df_executed = df_executed.rename(columns={'הוצאה נטו': 'executed'})
+
+    df = df_original.merge(df_approved[['קוד תקנה', 'approved']], on='קוד תקנה', how='outer')
+    df = df.merge(df_executed[['קוד תקנה', 'executed']], on='קוד תקנה', how='outer')
+
+    df = df.rename(columns={
+        'שנה': 'year',
+        'קוד תקנה': 'code',
+        'שם תקנה': 'name'
+    })
+
+    for x in range(0, len(df), 50):
+        y = x + 50
+        print(x, y)
+        df_temp = df[x:y]
+        df_json = df_temp.to_json(orient='records', force_ascii=False)
+        json_obj = json.loads(df_json)
+        takanot_request_special(json_obj)
 
 
