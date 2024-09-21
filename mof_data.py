@@ -25,7 +25,7 @@ def get_data(year, organization, budget):
         2016: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2016.xlsx',
         2015: 'https://www.gov.il/BlobFolder/policy/tableau/he/tableau_BudgetData2015.xlsx'
     }
-    # url20241 = 'C:\\Users\danny\Desktop\BudgetData\original2024Before0710231024.xlsx'
+    # url20241 = 'before0710original2024.xlsx'
 
     # Access the URL using the year
     url = urls.get(year)  # Get the URL based on the provided year

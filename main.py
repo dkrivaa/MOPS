@@ -8,3 +8,4 @@ from takanot import update_takanot
 
 update_annual()
 update_takanot()
+
