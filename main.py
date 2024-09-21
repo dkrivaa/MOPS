@@ -7,7 +7,7 @@ from history import update_annual, update_annual_special
 from takanot import update_takanot, update_takanot_special
 
 # update_annual()
-# update_annual_special()
+update_annual_special()
 # update_takanot()
-update_takanot_special()
+# update_takanot_special()
 
